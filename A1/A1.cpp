@@ -304,7 +304,10 @@ bool A1::keyInputEvent(int key, int action, int mods) {
 
 	// Fill in with event handling code...
 	if( action == GLFW_PRESS ) {
-		// Respond to some key events.
+		if (key == GLFW_KEY_Q) {
+			glfwSetWindowShouldClose(m_window, GL_TRUE);
+			eventHandled = true;
+		}
 	}
 
 	return eventHandled;
