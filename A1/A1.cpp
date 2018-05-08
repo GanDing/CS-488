@@ -148,6 +148,9 @@ void A1::guiLogic()
 			glfwSetWindowShouldClose(m_window, GL_TRUE);
 		}
 
+		if( ImGui::Button( "Reset Application" ) ) {
+		}
+
 		// Eventually you'll create multiple colour widgets with
 		// radio buttons.  If you use PushID/PopID to give them all
 		// unique IDs, then ImGui will be able to keep them separate.
@@ -160,6 +163,9 @@ void A1::guiLogic()
 		ImGui::PushID( 0 );
 		ImGui::ColorEdit3( "##Colour", colour );
 		ImGui::SameLine();
+		if( ImGui::RadioButton( "##Col", &current_col, 0 ) ) {
+			// Select this colour.
+		}
 		if( ImGui::RadioButton( "##Col", &current_col, 0 ) ) {
 			// Select this colour.
 		}
@@ -306,6 +312,9 @@ bool A1::keyInputEvent(int key, int action, int mods) {
 	if( action == GLFW_PRESS ) {
 		if (key == GLFW_KEY_Q) {
 			glfwSetWindowShouldClose(m_window, GL_TRUE);
+			eventHandled = true;
+		}
+		if (key == GLFW_KEY_R) {
 			eventHandled = true;
 		}
 	}
