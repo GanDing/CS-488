@@ -6,7 +6,7 @@
 
 ----
 
-Run the default premake4/make combination to comile the code. Then run './A0 ' to start rendering. This assignment was build successfully on lab computer .
+Run the default premake4/make combination to comile the code. Then run './A0 ' to start rendering. This assignment was build successfully on lab MC3022 since MC3007 lab can't be opened by the given code.
 
 ## Manual
 
