@@ -11,152 +11,16 @@
 using namespace glm;
 using namespace std;
 
-void A1::generateCubeVertices(GLfloat x_pos, GLfloat y_pos, GLfloat z_pos, vec3 cube_vertices[CUBE_VERTEX]) {
-	vec3 vertex_0 = vec3( x_pos, 				y_pos, 				 z_pos );
-	vec3 vertex_1 = vec3( 1.0f + x_pos, y_pos, 				 z_pos );
-	vec3 vertex_2 = vec3( x_pos, 				1.0f + y_pos , z_pos );
-	vec3 vertex_3 = vec3( 1.0f + x_pos, 1.0f + y_pos,  z_pos );
-	vec3 vertex_4 = vec3( x_pos, 				y_pos, 				 1.0f + z_pos );
-	vec3 vertex_5 = vec3( 1.0f + x_pos, y_pos, 				 1.0f + z_pos );
-	vec3 vertex_6 = vec3( x_pos, 				1.0f + y_pos,	 1.0f + z_pos );
-	vec3 vertex_7 = vec3( 1.0f + x_pos, 1.0f + y_pos,	 1.0f + z_pos );
-
-	cube_vertices[0] = vertex_0; 
-	cube_vertices[1] = vertex_1;
-	cube_vertices[2] = vertex_2; 
-	cube_vertices[3] = vertex_3;
-	cube_vertices[4] = vertex_4; 
-	cube_vertices[5] = vertex_5;
-	cube_vertices[6] = vertex_6;
-	cube_vertices[7] = vertex_7;
-}
-
-void A1::generateCubeFaces(vec3 cube_vertices[CUBE_VERTEX], vec3 cube_triangles[CUBE_TRIANGLES]) {
-	// front face
-	cube_triangles[0] = cube_vertices[0]; cube_triangles[1] = cube_vertices[1]; cube_triangles[2] = cube_vertices[3];
-	cube_triangles[3] = cube_vertices[0]; cube_triangles[4] = cube_vertices[2]; cube_triangles[5] = cube_vertices[3];
-	// back face
-	cube_triangles[6] = cube_vertices[4]; cube_triangles[7] = cube_vertices[5]; cube_triangles[8] = cube_vertices[7];
-	cube_triangles[9] = cube_vertices[4]; cube_triangles[10] = cube_vertices[6]; cube_triangles[11] = cube_vertices[7];
-	// left face
-	cube_triangles[12] = cube_vertices[0]; cube_triangles[13] = cube_vertices[2]; cube_triangles[14] = cube_vertices[6];
-	cube_triangles[15] = cube_vertices[0]; cube_triangles[16] = cube_vertices[4]; cube_triangles[17] = cube_vertices[6];
-	// right face
-	cube_triangles[18] = cube_vertices[1]; cube_triangles[19] = cube_vertices[3]; cube_triangles[20] = cube_vertices[7]; 
-	cube_triangles[21] = cube_vertices[1]; cube_triangles[22] = cube_vertices[5]; cube_triangles[23] = cube_vertices[7];
-	// top face
-	cube_triangles[24] = cube_vertices[0]; cube_triangles[25] = cube_vertices[1]; cube_triangles[26] = cube_vertices[5];
-	cube_triangles[27] = cube_vertices[0]; cube_triangles[28] = cube_vertices[4]; cube_triangles[29] = cube_vertices[5];
-	// bottom face
-	cube_triangles[30] = cube_vertices[2]; cube_triangles[31] = cube_vertices[3]; cube_triangles[32] = cube_vertices[7];
-	cube_triangles[33] = cube_vertices[2]; cube_triangles[34] = cube_vertices[6]; cube_triangles[35] = cube_vertices[7];
-}
-
-
-void A1::generateCubeEdges(glm::vec3 cube_vertices[CUBE_VERTEX], glm::vec3 cube_edges[CUBE_EDGES]){
-
-	// upper square
-	cube_edges[0] = cube_vertices[2]; 
-	cube_edges[1] = cube_vertices[3]; 
-	cube_edges[2] = cube_vertices[3];
-	cube_edges[3] = cube_vertices[7]; 
-	cube_edges[4] = cube_vertices[7]; 
-	cube_edges[5] = cube_vertices[6];
-	cube_edges[6] = cube_vertices[6]; 
-	cube_edges[7] = cube_vertices[2]; 
-	// middle column
-	cube_edges[8] = cube_vertices[6];
-	cube_edges[9] = cube_vertices[4];
-	cube_edges[10] = cube_vertices[7]; 
-	cube_edges[11] = cube_vertices[5];
-	cube_edges[12] = cube_vertices[3]; 
-	cube_edges[13] = cube_vertices[1]; 
-	cube_edges[14] = cube_vertices[2];
-	cube_edges[15] = cube_vertices[0]; 
-	// bottom square
-	cube_edges[16] = cube_vertices[4]; 
-	cube_edges[17] = cube_vertices[5];
-	cube_edges[18] = cube_vertices[5];
-	cube_edges[19] = cube_vertices[1]; 
-	cube_edges[20] = cube_vertices[1]; 
-	cube_edges[21] = cube_vertices[0]; 
-	cube_edges[22] = cube_vertices[0]; 
-	cube_edges[23] = cube_vertices[4];
-}
-
-void A1::generateIndicatorVertices(GLfloat x_pos, GLfloat y_pos, GLfloat z_pos, vec3 indicator_vertices[INDICATOR_VERTEX]) {
-	vec3 vertex_0 = vec3( x_pos, 				1.0f + y_pos,  z_pos );
-	vec3 vertex_1 = vec3( 1.0f + x_pos, 1.0f + y_pos,  z_pos );
-	vec3 vertex_2 = vec3( x_pos, 				1.0f + y_pos,  1.0f + z_pos );
-	vec3 vertex_3 = vec3( 1.0f + x_pos,	1.0f + y_pos,  1.0f + z_pos );
-	vec3 vertex_4 = vec3( 0.5f + x_pos, 0.25f + y_pos, 0.5f + z_pos );
-	vec3 vertex_5 = vec3( 0.5f + x_pos, 1.75f + y_pos, 0.5f + z_pos );
-
-	indicator_vertices[0] = vertex_0; 
-	indicator_vertices[1] = vertex_1;
-	indicator_vertices[2] = vertex_2; 
-	indicator_vertices[3] = vertex_3;
-	indicator_vertices[4] = vertex_4; 
-	indicator_vertices[5] = vertex_5;
-}
-
-void A1::generateIndicatorFaces(vec3 indicator_vertices[INDICATOR_VERTEX], vec3 indicator_triangles[INDICATOR_TRIANGLES]) {
-	// upper front
-	indicator_triangles[0] = indicator_vertices[5]; indicator_triangles[1] = indicator_vertices[2]; indicator_triangles[2] = indicator_vertices[3];
-	// bottom front
-	indicator_triangles[3] = indicator_vertices[2]; indicator_triangles[4] = indicator_vertices[4]; indicator_triangles[5] = indicator_vertices[3];
-	// upper left
-	indicator_triangles[6] = indicator_vertices[5]; indicator_triangles[7] = indicator_vertices[0]; indicator_triangles[8] = indicator_vertices[2];
-	// bottom left
-	indicator_triangles[9] = indicator_vertices[0]; indicator_triangles[10] = indicator_vertices[4]; indicator_triangles[11] = indicator_vertices[2];
-	// upper right
-	indicator_triangles[12] = indicator_vertices[5]; indicator_triangles[13] = indicator_vertices[3]; indicator_triangles[14] = indicator_vertices[1];
-	// bottom right
-	indicator_triangles[15] = indicator_vertices[3]; indicator_triangles[16] = indicator_vertices[4]; indicator_triangles[17] = indicator_vertices[1];
-	// upper back 
-	indicator_triangles[18] = indicator_vertices[1]; indicator_triangles[19] = indicator_vertices[0]; indicator_triangles[20] = indicator_vertices[5]; 
-	// bottom back
-	indicator_triangles[21] = indicator_vertices[0]; indicator_triangles[22] = indicator_vertices[1]; indicator_triangles[23] = indicator_vertices[4];
-}
-
-
-void A1::generateIndicatorEdges(vec3 indicator_vertices[INDICATOR_VERTEX], vec3 indicator_edges[INDICATOR_EDGES]) {
-	// upper four
-	indicator_edges[0] = indicator_vertices[5]; 
-	indicator_edges[1] = indicator_vertices[2]; 
-	indicator_edges[2] = indicator_vertices[5];
-	indicator_edges[3] = indicator_vertices[0]; 
-	indicator_edges[4] = indicator_vertices[5]; 
-	indicator_edges[5] = indicator_vertices[1];
-	indicator_edges[6] = indicator_vertices[5]; 
-	indicator_edges[7] = indicator_vertices[3]; 
-	// middle square
-	indicator_edges[8] = indicator_vertices[2];
-	indicator_edges[9] = indicator_vertices[3]; 
-	indicator_edges[10] = indicator_vertices[3]; 
-	indicator_edges[11] = indicator_vertices[1];
-	indicator_edges[12] = indicator_vertices[1]; 
-	indicator_edges[13] = indicator_vertices[0]; 
-	indicator_edges[14] = indicator_vertices[0];
-	indicator_edges[15] = indicator_vertices[2]; 
-	// bottom four
-	indicator_edges[16] = indicator_vertices[2]; 
-	indicator_edges[17] = indicator_vertices[4];
-	indicator_edges[18] = indicator_vertices[3]; 
-	indicator_edges[19] = indicator_vertices[4]; 
-	indicator_edges[20] = indicator_vertices[1]; 
-	indicator_edges[21] = indicator_vertices[4]; 
-	indicator_edges[22] = indicator_vertices[0]; 
-	indicator_edges[23] = indicator_vertices[4];
-}
-
 //----------------------------------------------------------------------------------------
 // Constructor
 A1::A1()
 	: current_col( 0 ), 
 	m_shape_size ( 1.0f ),
 	m_shape_rotation( 0.0f ),
-	m_shape_rotation_x( 0.0f )
+	m_shape_rotation_x( 0.0f ),
+	shift_press( false ),
+	symmetric_press( false ),
+	border_press( true )
 {
 	// init the default colours
 	default_colour[0] = new float[3]{ 0.00f, 0.75f, 0.94f };
@@ -491,10 +355,11 @@ void A1::drawCube(GLint x_pos, GLint z_pos)
 		glBindVertexArray( m_cube_vao[x_pos][i][z_pos][0] );
 		glUniform3f( col_uni, default_colour[colour][0], default_colour[colour][1], default_colour[colour][2] );
 		glDrawArrays( GL_TRIANGLES , 0, CUBE_TRIANGLES);
-
-		glBindVertexArray( m_cube_vao[x_pos][i][z_pos][1] );
-		glUniform3f( col_uni, 0, 0, 0 );
-		glDrawArrays( GL_LINES , 0, CUBE_EDGES);
+		if (border_press) {
+			glBindVertexArray( m_cube_vao[x_pos][i][z_pos][1] );
+			glUniform3f( col_uni, 0, 0, 0 );
+			glDrawArrays( GL_LINES , 0, CUBE_EDGES);
+		}
 	}
 	
 }
@@ -521,12 +386,187 @@ void A1::drawIndicator() {
 	glEnable( GL_DEPTH_TEST );
 }
 
+void A1::generateCubeVertices(GLfloat x_pos, GLfloat y_pos, GLfloat z_pos, vec3 cube_vertices[CUBE_VERTEX]) {
+	vec3 vertex_0 = vec3( x_pos, 				y_pos, 				 z_pos );
+	vec3 vertex_1 = vec3( 1.0f + x_pos, y_pos, 				 z_pos );
+	vec3 vertex_2 = vec3( x_pos, 				1.0f + y_pos , z_pos );
+	vec3 vertex_3 = vec3( 1.0f + x_pos, 1.0f + y_pos,  z_pos );
+	vec3 vertex_4 = vec3( x_pos, 				y_pos, 				 1.0f + z_pos );
+	vec3 vertex_5 = vec3( 1.0f + x_pos, y_pos, 				 1.0f + z_pos );
+	vec3 vertex_6 = vec3( x_pos, 				1.0f + y_pos,	 1.0f + z_pos );
+	vec3 vertex_7 = vec3( 1.0f + x_pos, 1.0f + y_pos,	 1.0f + z_pos );
+
+	cube_vertices[0] = vertex_0; 
+	cube_vertices[1] = vertex_1;
+	cube_vertices[2] = vertex_2; 
+	cube_vertices[3] = vertex_3;
+	cube_vertices[4] = vertex_4; 
+	cube_vertices[5] = vertex_5;
+	cube_vertices[6] = vertex_6;
+	cube_vertices[7] = vertex_7;
+}
+
+void A1::generateCubeFaces(vec3 cube_vertices[CUBE_VERTEX], vec3 cube_triangles[CUBE_TRIANGLES]) {
+	// front face
+	cube_triangles[0] = cube_vertices[0]; cube_triangles[1] = cube_vertices[1]; cube_triangles[2] = cube_vertices[3];
+	cube_triangles[3] = cube_vertices[0]; cube_triangles[4] = cube_vertices[2]; cube_triangles[5] = cube_vertices[3];
+	// back face
+	cube_triangles[6] = cube_vertices[4]; cube_triangles[7] = cube_vertices[5]; cube_triangles[8] = cube_vertices[7];
+	cube_triangles[9] = cube_vertices[4]; cube_triangles[10] = cube_vertices[6]; cube_triangles[11] = cube_vertices[7];
+	// left face
+	cube_triangles[12] = cube_vertices[0]; cube_triangles[13] = cube_vertices[2]; cube_triangles[14] = cube_vertices[6];
+	cube_triangles[15] = cube_vertices[0]; cube_triangles[16] = cube_vertices[4]; cube_triangles[17] = cube_vertices[6];
+	// right face
+	cube_triangles[18] = cube_vertices[1]; cube_triangles[19] = cube_vertices[3]; cube_triangles[20] = cube_vertices[7]; 
+	cube_triangles[21] = cube_vertices[1]; cube_triangles[22] = cube_vertices[5]; cube_triangles[23] = cube_vertices[7];
+	// top face
+	cube_triangles[24] = cube_vertices[0]; cube_triangles[25] = cube_vertices[1]; cube_triangles[26] = cube_vertices[5];
+	cube_triangles[27] = cube_vertices[0]; cube_triangles[28] = cube_vertices[4]; cube_triangles[29] = cube_vertices[5];
+	// bottom face
+	cube_triangles[30] = cube_vertices[2]; cube_triangles[31] = cube_vertices[3]; cube_triangles[32] = cube_vertices[7];
+	cube_triangles[33] = cube_vertices[2]; cube_triangles[34] = cube_vertices[6]; cube_triangles[35] = cube_vertices[7];
+}
+
+
+void A1::generateCubeEdges(glm::vec3 cube_vertices[CUBE_VERTEX], glm::vec3 cube_edges[CUBE_EDGES]){
+
+	// upper square
+	cube_edges[0] = cube_vertices[2]; 
+	cube_edges[1] = cube_vertices[3]; 
+	cube_edges[2] = cube_vertices[3];
+	cube_edges[3] = cube_vertices[7]; 
+	cube_edges[4] = cube_vertices[7]; 
+	cube_edges[5] = cube_vertices[6];
+	cube_edges[6] = cube_vertices[6]; 
+	cube_edges[7] = cube_vertices[2]; 
+	// middle column
+	cube_edges[8] = cube_vertices[6];
+	cube_edges[9] = cube_vertices[4];
+	cube_edges[10] = cube_vertices[7]; 
+	cube_edges[11] = cube_vertices[5];
+	cube_edges[12] = cube_vertices[3]; 
+	cube_edges[13] = cube_vertices[1]; 
+	cube_edges[14] = cube_vertices[2];
+	cube_edges[15] = cube_vertices[0]; 
+	// bottom square
+	cube_edges[16] = cube_vertices[4]; 
+	cube_edges[17] = cube_vertices[5];
+	cube_edges[18] = cube_vertices[5];
+	cube_edges[19] = cube_vertices[1]; 
+	cube_edges[20] = cube_vertices[1]; 
+	cube_edges[21] = cube_vertices[0]; 
+	cube_edges[22] = cube_vertices[0]; 
+	cube_edges[23] = cube_vertices[4];
+}
+
+void A1::generateIndicatorVertices(GLfloat x_pos, GLfloat y_pos, GLfloat z_pos, vec3 indicator_vertices[INDICATOR_VERTEX]) {
+	vec3 vertex_0 = vec3( x_pos, 				1.0f + y_pos,  z_pos );
+	vec3 vertex_1 = vec3( 1.0f + x_pos, 1.0f + y_pos,  z_pos );
+	vec3 vertex_2 = vec3( x_pos, 				1.0f + y_pos,  1.0f + z_pos );
+	vec3 vertex_3 = vec3( 1.0f + x_pos,	1.0f + y_pos,  1.0f + z_pos );
+	vec3 vertex_4 = vec3( 0.5f + x_pos, 0.25f + y_pos, 0.5f + z_pos );
+	vec3 vertex_5 = vec3( 0.5f + x_pos, 1.75f + y_pos, 0.5f + z_pos );
+
+	indicator_vertices[0] = vertex_0; 
+	indicator_vertices[1] = vertex_1;
+	indicator_vertices[2] = vertex_2; 
+	indicator_vertices[3] = vertex_3;
+	indicator_vertices[4] = vertex_4; 
+	indicator_vertices[5] = vertex_5;
+}
+
+void A1::generateIndicatorFaces(vec3 indicator_vertices[INDICATOR_VERTEX], vec3 indicator_triangles[INDICATOR_TRIANGLES]) {
+	// upper front
+	indicator_triangles[0] = indicator_vertices[5]; indicator_triangles[1] = indicator_vertices[2]; indicator_triangles[2] = indicator_vertices[3];
+	// bottom front
+	indicator_triangles[3] = indicator_vertices[2]; indicator_triangles[4] = indicator_vertices[4]; indicator_triangles[5] = indicator_vertices[3];
+	// upper left
+	indicator_triangles[6] = indicator_vertices[5]; indicator_triangles[7] = indicator_vertices[0]; indicator_triangles[8] = indicator_vertices[2];
+	// bottom left
+	indicator_triangles[9] = indicator_vertices[0]; indicator_triangles[10] = indicator_vertices[4]; indicator_triangles[11] = indicator_vertices[2];
+	// upper right
+	indicator_triangles[12] = indicator_vertices[5]; indicator_triangles[13] = indicator_vertices[3]; indicator_triangles[14] = indicator_vertices[1];
+	// bottom right
+	indicator_triangles[15] = indicator_vertices[3]; indicator_triangles[16] = indicator_vertices[4]; indicator_triangles[17] = indicator_vertices[1];
+	// upper back 
+	indicator_triangles[18] = indicator_vertices[1]; indicator_triangles[19] = indicator_vertices[0]; indicator_triangles[20] = indicator_vertices[5]; 
+	// bottom back
+	indicator_triangles[21] = indicator_vertices[0]; indicator_triangles[22] = indicator_vertices[1]; indicator_triangles[23] = indicator_vertices[4];
+}
+
+
+void A1::generateIndicatorEdges(vec3 indicator_vertices[INDICATOR_VERTEX], vec3 indicator_edges[INDICATOR_EDGES]) {
+	// upper four
+	indicator_edges[0] = indicator_vertices[5]; 
+	indicator_edges[1] = indicator_vertices[2]; 
+	indicator_edges[2] = indicator_vertices[5];
+	indicator_edges[3] = indicator_vertices[0]; 
+	indicator_edges[4] = indicator_vertices[5]; 
+	indicator_edges[5] = indicator_vertices[1];
+	indicator_edges[6] = indicator_vertices[5]; 
+	indicator_edges[7] = indicator_vertices[3]; 
+	// middle square
+	indicator_edges[8] = indicator_vertices[2];
+	indicator_edges[9] = indicator_vertices[3]; 
+	indicator_edges[10] = indicator_vertices[3]; 
+	indicator_edges[11] = indicator_vertices[1];
+	indicator_edges[12] = indicator_vertices[1]; 
+	indicator_edges[13] = indicator_vertices[0]; 
+	indicator_edges[14] = indicator_vertices[0];
+	indicator_edges[15] = indicator_vertices[2]; 
+	// bottom four
+	indicator_edges[16] = indicator_vertices[2]; 
+	indicator_edges[17] = indicator_vertices[4];
+	indicator_edges[18] = indicator_vertices[3]; 
+	indicator_edges[19] = indicator_vertices[4]; 
+	indicator_edges[20] = indicator_vertices[1]; 
+	indicator_edges[21] = indicator_vertices[4]; 
+	indicator_edges[22] = indicator_vertices[0]; 
+	indicator_edges[23] = indicator_vertices[4];
+}
+
 //----------------------------------------------------------------------------------------
 /*
  * Called once, after program is signaled to terminate.
  */
 void A1::cleanup()
 {}
+
+void A1::moveActive(int x_pos, int z_pos) {
+	active_cell.first += x_pos;
+	active_cell.second += z_pos;
+
+	if (active_cell.first < 0) active_cell.first = 0;
+	if (active_cell.first > DIM-1) active_cell.first = DIM-1;
+	if (active_cell.second < 0) active_cell.second = 0;
+	if (active_cell.second > DIM-1) active_cell.second = DIM-1;
+
+	if (shift_press) {
+		cell_info[active_cell.first][active_cell.second].first = 
+			cell_info[active_cell.first-x_pos][active_cell.second-z_pos].first;
+
+
+		cell_info[active_cell.first][active_cell.second].second = 
+			cell_info[active_cell.first-x_pos][active_cell.second-z_pos].second;
+	}
+}
+
+void A1::reset() {
+	active_cell.first = 0;
+	active_cell.second = 0;
+
+	current_col = 0;
+	m_shape_size = 1.0f;
+	m_shape_rotation = 0.0f;
+
+	for (int i = 0; i < DIM; ++i) {
+		for (int j = 0; j < DIM; ++j) {
+			cell_info[i][j].first = 0;
+			cell_info[i][j].second = 0;
+		}
+	}
+}
+
 
 //----------------------------------------------------------------------------------------
 /*
@@ -656,6 +696,9 @@ bool A1::keyInputEvent(int key, int action, int mods) {
 		if (key == GLFW_KEY_C) {
 			symmetric_press = 1;
 		}
+		if (key == GLFW_KEY_B) {
+			border_press = !border_press;
+		}
 		if (key == GLFW_KEY_UP) {
 			moveActive(0, -1);
 		}
@@ -683,40 +726,4 @@ bool A1::keyInputEvent(int key, int action, int mods) {
 	}
 
 	return eventHandled;
-}
-
-
-void A1::moveActive(int x_pos, int z_pos) {
-	active_cell.first += x_pos;
-	active_cell.second += z_pos;
-
-	if (active_cell.first < 0) active_cell.first = 0;
-	if (active_cell.first > DIM-1) active_cell.first = DIM-1;
-	if (active_cell.second < 0) active_cell.second = 0;
-	if (active_cell.second > DIM-1) active_cell.second = DIM-1;
-
-	if (shift_press) {
-		cell_info[active_cell.first][active_cell.second].first = 
-			cell_info[active_cell.first-x_pos][active_cell.second-z_pos].first;
-
-
-		cell_info[active_cell.first][active_cell.second].second = 
-			cell_info[active_cell.first-x_pos][active_cell.second-z_pos].second;
-	}
-}
-
-void A1::reset() {
-	active_cell.first = 0;
-	active_cell.second = 0;
-
-	current_col = 0;
-	m_shape_size = 1.0f;
-	m_shape_rotation = 0.0f;
-
-	for (int i = 0; i < DIM; ++i) {
-		for (int j = 0; j < DIM; ++j) {
-			cell_info[i][j].first = 0;
-			cell_info[i][j].second = 0;
-		}
-	}
 }
