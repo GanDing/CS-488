@@ -2,6 +2,7 @@
 #include "cs488-framework/GlErrorCheck.hpp"
 
 #include <iostream>
+#include <bitset>
 using namespace std;
 
 #include <imgui/imgui.h>
@@ -55,6 +56,11 @@ void A2::init()
 	generateVertexBuffers();
 
 	mapVboDataToVertexAttributeLocation();
+
+	reset();
+	initViewPort();
+	initFrame();
+	initCube();
 }
 
 //----------------------------------------------------------------------------------------
@@ -155,11 +161,101 @@ void A2::initLineData()
 	m_vertexData.index = 0;
 }
 
+void A2::initFrame() {
+	// init world frame
+	world_frame[0][0] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	world_frame[0][1] = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+	world_frame[1][0] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	world_frame[1][1] = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+
+	world_frame[2][0] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	world_frame[2][1] = vec4(0.0f, 0.0f, 1.0f, 1.0f);
+
+	// init model frame
+	model_frame[0][0] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	model_frame[0][1] = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+	model_frame[1][0] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	model_frame[1][1] = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+
+	model_frame[2][0] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	model_frame[2][1] = vec4(0.0f, 0.0f, 1.0f, 1.0f);
+
+	// init color
+	world_color[0] = vec3(1.0f, 0.0f, 0.0f);
+	world_color[1] = vec3(0.0f, 1.0f, 0.0f);
+	world_color[2] = vec3(0.0f, 0.0f, 1.0f);
+
+	model_color[0] = vec3(1.0f, 1.0f, 0.0f);
+	model_color[1] = vec3(0.0f, 1.0f, 1.0f);
+	model_color[2] = vec3(1.0f, 0.0f, 1.0f);
+}
+
+void A2::initViewPort() {
+	viewport_point[0] = -1 + 2 * (0.05 * m_windowHeight) / m_windowHeight;
+	viewport_point[1] = -1 + 2 * (0.05 * m_windowWidth) / m_windowWidth;
+	viewport_point[2] = 1 - 2 * (0.05 * m_windowHeight) / m_windowHeight;
+	viewport_point[3] = 1 - 2 * (0.05 * m_windowWidth) / m_windowWidth;
+}
+
+void A2::initCube() {
+	cube[0][0]=vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	cube[0][1]=vec4(1.0f, 1.0f, -1.0f, 1.0f);
+
+	cube[1][0]=vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	cube[1][1]=vec4(1.0f, -1.0f, 1.0f, 1.0f);
+
+	cube[2][0]=vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	cube[2][1]=vec4(-1.0f, 1.0f, 1.0f, 1.0f);
+
+	cube[3][0]=vec4(1.0f, -1.0f, -1.0f, 1.0f);
+	cube[3][1]=vec4(1.0f, 1.0f, -1.0f, 1.0f);
+
+	cube[4][0]=vec4(1.0f, -1.0f, -1.0f, 1.0f);
+	cube[4][1]=vec4(1.0f, -1.0f, 1.0f, 1.0f);
+
+	cube[5][0]=vec4(1.0f, -1.0f, -1.0f, 1.0f);
+	cube[5][1]=vec4(-1.0f, -1.0f, -1.0f, 1.0f);
+
+	cube[6][0]=vec4(-1.0f, 1.0f, -1.0f, 1.0f);
+	cube[6][1]=vec4( 1.0f, 1.0f, -1.0f, 1.0f);
+
+	cube[7][0]=vec4(-1.0f, 1.0f, -1.0f, 1.0f);
+	cube[7][1]=vec4(-1.0f, 1.0f, 1.0f, 1.0f);
+
+	cube[8][0]=vec4(-1.0f, 1.0f, -1.0f, 1.0f);
+	cube[8][1]=vec4(-1.0f, -1.0f, -1.0f, 1.0f);
+
+	cube[9][0]=vec4(-1.0f, -1.0f, 1.0f, 1.0f);
+	cube[9][1]=vec4(1.0f, -1.0f, 1.0f, 1.0f);
+
+	cube[10][0]=vec4(-1.0f, -1.0f, 1.0f, 1.0f);
+	cube[10][1]=vec4(-1.0f, 1.0f, 1.0f, 1.0f);
+
+	cube[11][0]=vec4(-1.0f, -1.0f, 1.0f, 1.0f);
+	cube[11][1]=vec4(-1.0f, -1.0f, -1.0f, 1.0f);
+}
+
 //---------------------------------------------------------------------------------------
 void A2::setLineColour (
 		const glm::vec3 & colour
 ) {
 	m_currentLineColour = colour;
+}
+
+void A2::setPerspectiveView(float curFieldOfView, float curNear, float curFar) {
+	curFieldOfView = curFieldOfView < FIELD_OF_VIEW_MIN ? FIELD_OF_VIEW_MIN : curFieldOfView;
+	curFieldOfView = curFieldOfView > FIELD_OF_VIEW_MAX ? FIELD_OF_VIEW_MAX : curFieldOfView;
+	field_of_view = curFieldOfView;
+	near = curNear;
+	far = curFar;
+	P = mat4(vec4(1/(tan(radians(field_of_view/2))), 0.0f, 0.0f, 0.0f),
+					 vec4(0.0f, 1/tan(radians(field_of_view/2)), 0.0f, 0.0f),
+					 vec4(0.0f, 0.0f, (far+near)/(far-near), 1.0f),
+		       vec4(0.0f, 0.0f, -2*far*near/(far-near), 0.0f));
 }
 
 //---------------------------------------------------------------------------------------
@@ -178,6 +274,57 @@ void A2::drawLine(
 	m_vertexData.numVertices += 2;
 }
 
+void A2::transferDrawLine(glm::vec4 v1, glm::vec4 v2) {
+	if (isClipTwoFace(v1, v2)) {
+		v1 = P * v1;
+		v2 = P * v2;
+		if (isClipFourFace(v1, v2)) {
+			fitViewPort(v1, v2);
+			drawLine(vec2(v1.x/v1.w, v1.y/v1.w), vec2(v2.x/v2.w, v2.y/v2.w));
+		}
+	}
+}
+
+void A2::drawFrame() {
+	for (int i = 0; i < FRAME_AXIS; ++i) {
+		// draw world frame
+		setLineColour(world_color[i]);
+		vec4 v1 = world_frame[i][0];
+		vec4 v2 = world_frame[i][1];
+		v1 = V * v1;
+		v2 = V * v2;
+		transferDrawLine(v1, v2);
+
+		// draw model frame
+		setLineColour(model_color[i]);
+		v1 = model_frame[i][0];
+		v2 = model_frame[i][1];
+		v1 = V * M * v1;
+		v2 = V * M * v2;
+		transferDrawLine(v1, v2);
+	}
+}
+
+
+void A2::drawViewPort(){
+	setLineColour(vec3(0.0));
+	drawLine(vec2(viewport_point[0], viewport_point[1]), vec2(viewport_point[0], viewport_point[3]));
+	drawLine(vec2(viewport_point[0], viewport_point[1]), vec2(viewport_point[2], viewport_point[1]));
+	drawLine(vec2(viewport_point[0], viewport_point[3]), vec2(viewport_point[2], viewport_point[3]));
+	drawLine(vec2(viewport_point[2], viewport_point[1]), vec2(viewport_point[2], viewport_point[3]));
+}
+
+void A2::drawCube(){
+	setLineColour(vec3(1.0f, 1.0f, 1.0f));
+	for (int i = 0; i < 12; ++i) {
+		vec4 v1 = cube[i][0];
+		vec4 v2 = cube[i][1];
+		v1 = V * M * scale(model_scale) * v1;
+		v2 = V * M * scale(model_scale) * v2;
+		transferDrawLine(v1, v2);
+	}
+}
+
 //----------------------------------------------------------------------------------------
 /*
  * Called once per frame, before guiLogic().
@@ -188,21 +335,9 @@ void A2::appLogic()
 
 	// Call at the beginning of frame, before drawing lines:
 	initLineData();
-
-	// Draw outer square:
-	setLineColour(vec3(1.0f, 0.7f, 0.8f));
-	drawLine(vec2(-0.5f, -0.5f), vec2(0.5f, -0.5f));
-	drawLine(vec2(0.5f, -0.5f), vec2(0.5f, 0.5f));
-	drawLine(vec2(0.5f, 0.5f), vec2(-0.5f, 0.5f));
-	drawLine(vec2(-0.5f, 0.5f), vec2(-0.5f, -0.5f));
-
-
-	// Draw inner square:
-	setLineColour(vec3(0.2f, 1.0f, 1.0f));
-	drawLine(vec2(-0.25f, -0.25f), vec2(0.25f, -0.25f));
-	drawLine(vec2(0.25f, -0.25f), vec2(0.25f, 0.25f));
-	drawLine(vec2(0.25f, 0.25f), vec2(-0.25f, 0.25f));
-	drawLine(vec2(-0.25f, 0.25f), vec2(-0.25f, -0.25f));
+	drawViewPort();
+	drawFrame();
+	drawCube();
 }
 
 //----------------------------------------------------------------------------------------
@@ -225,19 +360,189 @@ void A2::guiLogic()
 			windowFlags);
 
 
-		// Add more gui elements here here ...
-
-
 		// Create Button, and check if it was clicked:
 		if( ImGui::Button( "Quit Application" ) ) {
 			glfwSetWindowShouldClose(m_window, GL_TRUE);
 		}
+		if( ImGui::Button( "Reset Application" ) ) {
+			reset();
+		}
 
+		for (int i = 0; i < 7; ++i) {
+			ImGui::PushID( i );
+			ImGui::Text("%s", OPTION[i]);
+			ImGui::SameLine();
+			if( ImGui::RadioButton( "##Option", &current_mode, i ) ) {
+			}
+			ImGui::PopID();
+		}
 		ImGui::Text( "Framerate: %.1f FPS", ImGui::GetIO().Framerate );
 
 	ImGui::End();
 }
 
+void A2::reset() {
+	current_mode = 0;
+	near = NEAR;
+	far = FAR;
+	field_of_view = FIELD_OF_VIEW;
+
+	model_scale = vec3(1, 1, 1);
+	model_rotate = vec3(0, 0, 0);
+	model_translate = vec3(0, 0, 0);
+
+	view_rotate = vec3(0, 0, 0);
+	view_translate = vec3(0, 0, 0);
+
+	M = mat4();
+
+	V = inverse(mat4(
+		vec4(1, 0, 0, 0), 
+		vec4(0, 1, 0, 0), 
+		vec4(0, 0, -1, 0), 
+		vec4(0, 0, 10, 1)));
+
+	setPerspectiveView(field_of_view, near, far);
+
+}
+
+bool A2::isClipTwoFace(vec4 &v1, vec4 &v2) {
+	float b[2][2];
+	bitset<2> c1;
+	bitset<2> c2;
+
+	// bn
+	b[0][0] = -near + v1.z; 
+	b[0][1] = -near + v2.z;
+
+	// bf
+	b[1][0] = far - v1.z; 
+	b[1][1] = far - v2.z;
+
+	for (int i = 0; i < 2; ++i) {
+		c1[i] = (b[i][0] < 0);
+		c2[i] = (b[i][1] < 0);
+	}	// for
+
+	// trivsal accept
+	if((c1|c2) == 0) return true;
+	// trivsal reject
+	if((c1&c2) != 0) return false;
+
+	// other case
+	for (int i = 0; i < 2; i++){
+		if(c1[i]|c2[i]){
+			float t = b[i][0] / (b[i][0] - b[i][1]);
+			vec4 newV = (1 - t) * v1 + t * v2;
+			c1[i] ? v1 = newV : v2 = newV;
+		}
+	}
+	return true;
+}
+
+bool A2::isClipFourFace(vec4 &v1, vec4 &v2) {
+	float b[4][2];
+	bitset<4> c1;
+	bitset<4> c2;
+	for (int i = 0; i < 4; ++i) {
+		// bl
+		b[0][0] =	v1.w + v1.x;
+		b[0][1] =	v2.w + v2.x;
+		// br
+		b[1][0] =	v1.w - v1.x;
+		b[1][1] = v2.w - v2.x;
+		// bb
+		b[2][0] =	v1.w + v1.y;
+		b[2][1] =	v2.w + v2.y;
+		// bt
+		b[3][0] =	v1.w - v1.y;
+		b[3][1] =	v2.w - v2.y;
+		
+		for (int i = 0; i < 4; ++i) {
+			c1[i] = (b[i][0] < 0);
+			c2[i] = (b[i][1] < 0);
+		}	// for
+
+		// trivsal accept
+		if ((c1|c2) == 0) return true;
+		// trivsal reject
+		if ((c1&c2) != 0) return false;
+
+		// other case
+		if (c1[i]|c2[i]){					// if one of each is out of bound
+			float t = b[i][0] / (b[i][0] - b[i][1]);
+			vec4 newV = (1 - t) * v1 + t * v2;
+			c1[i] ? v1 = newV : v2 = newV;
+		}
+	}
+	return true;
+}
+
+void A2::fitViewPort(glm::vec4 &v1, glm::vec4 &v2) {
+	v1.x = v1.x/v1.w; 
+	v1.y = v1.y/v1.w; 
+	v1.w = 1;
+
+	v2.x = v2.x/v2.w; 
+	v2.y = v2.y/v2.w; 
+	v2.w = 1;
+
+	float width = abs(viewport_point[0] - viewport_point[2]);
+	float height = abs(viewport_point[1] - viewport_point[3]);
+
+	float left = std::min(viewport_point[0], viewport_point[2]);
+	float right = std::max(viewport_point[0], viewport_point[2]);
+	float top = std::max(viewport_point[1], viewport_point[3]);
+	float bottom = std::min(viewport_point[1], viewport_point[3]);
+
+
+	v1.x = left + (((v1.x + 1)/2) * width);
+	v1.y = bottom + (((v1.y + 1)/2) * height);
+	v2.x = left + (((v2.x + 1)/2) * width);
+	v2.y = bottom + (((v2.y + 1)/2) * height);
+}
+
+mat4 A2::scale(vec3 v) {
+	mat4 result = mat4(
+		vec4(v[0], 0.0f, 0.0f, 0.0f),
+		vec4(0.0f, v[1], 0.0f, 0.0f),
+		vec4(0.0f, 0.0f, v[2], 0.0f),
+		vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+	return result;
+}
+
+mat4 A2::translate(vec3 theta) {
+	mat4 result = mat4(
+		vec4(1.0f, 0.0f, 0.0f, 0.0f),
+		vec4(0.0f, 1.0f, 0.0f, 0.0f),
+		vec4(0.0f, 0.0f, 1.0f, 0.0f),
+		vec4(theta[0], theta[1], theta[2], 1.0f));
+
+	return result;
+}
+
+mat4 A2::rotate(vec3 v){
+	mat4 rotateX = mat4(
+		vec4(1, 0, 0, 0),
+		vec4(0, cos(v.x), sin(v.x), 0),
+		vec4(0, -sin(v.x), cos(v.x), 0),
+		vec4(0, 0, 0, 1));
+
+	mat4 rotateY = mat4(
+		vec4(cos(v.y), 0, -sin(v.y), 0),
+		vec4(0, 1, 0, 0),
+		vec4(sin(v.y), 0, cos(v.y), 0),
+		vec4(0, 0, 0, 1));
+
+	mat4 rotateZ= mat4(
+		vec4(cos(v.z), sin(v.z), 0, 0),
+		vec4(-sin(v.z), cos(v.z), 0, 0),
+		vec4(0, 0, 1, 0),
+		vec4(0, 0, 0, 1));
+
+	return (rotateX)*(rotateY)*(rotateZ);
+}
 //----------------------------------------------------------------------------------------
 void A2::uploadVertexDataToVbos() {
 
@@ -314,9 +619,79 @@ bool A2::mouseMoveEvent (
 		double yPos
 ) {
 	bool eventHandled(false);
+	if (!ImGui::IsMouseHoveringAnyWindow()) {
+			double x_distance = xPos - mouse_x_current_pos;
+			if (current_mode == 0) {	// view rotate
+				mat4 rotateMat;
+				if(ImGui::IsMouseDown(0))
+					rotateMat = rotate(vec3(0.005 * x_distance, 0, 0));
+				if(ImGui::IsMouseDown(2)) 
+					rotateMat = rotate(vec3(0, 0.005* x_distance, 0));
+				if(ImGui::IsMouseDown(1))
+					rotateMat = rotate(vec3(0, 0, 0.005 * x_distance));
+				V = inverse(rotateMat) * V;
+			}
+			if (current_mode == 1) {	// view translate
+				mat4 translateMat;
+				if(ImGui::IsMouseDown(0))
+					translateMat = translate(vec3(0.02 * x_distance, 0, 0));
+				if(ImGui::IsMouseDown(2)) 
+					translateMat = translate(vec3(0, 0.02 * x_distance, 0));
+				if(ImGui::IsMouseDown(1))
+					translateMat = translate(vec3(0, 0, 0.02 * x_distance));
+				V = inverse(translateMat) * V;
+			}
+			if (current_mode == 2) {	// prespective
+				if(ImGui::IsMouseDown(0))
+					setPerspectiveView(field_of_view + x_distance*0.02, near, far);
+				if(ImGui::IsMouseDown(2)) 
+					setPerspectiveView(field_of_view, near + x_distance*0.02, far);
+				if(ImGui::IsMouseDown(1))
+					setPerspectiveView(field_of_view, near, far + x_distance*0.02);
+			}
+			if (current_mode == 3) {	// model rotate
+				mat4 rotateMat;
+				if(ImGui::IsMouseDown(0))
+					rotateMat = rotate(vec3(0.02 * x_distance, 0, 0));
+				if(ImGui::IsMouseDown(2)) 
+					rotateMat = rotate(vec3(0, 0.02 * x_distance, 0));
+				if(ImGui::IsMouseDown(1))
+					rotateMat = rotate(vec3(0, 0, 0.02 * x_distance));
+				M = M * rotateMat;
+			}
+			if (current_mode == 4) {	// model translate
+				mat4 translateMat;
+				if(ImGui::IsMouseDown(0))
+					translateMat = translate(vec3(0.02 * x_distance, 0, 0));
+				if(ImGui::IsMouseDown(2)) 
+					translateMat = translate(vec3(0, 0.02 * x_distance, 0));
+				if(ImGui::IsMouseDown(1))
+					translateMat = translate(vec3(0, 0, 0.02 * x_distance));
+				M = M * translateMat;
+			}
+			if (current_mode == 5) {	// model scale
+				if(ImGui::IsMouseDown(0))
+					model_scale[0] = (1 + 0.02 * x_distance) * model_scale[0];
+				if(ImGui::IsMouseDown(2)) 
+					model_scale[1] = (1 + 0.02 * x_distance) * model_scale[1];
+				if(ImGui::IsMouseDown(1))
+					model_scale[2] = (1 + 0.02 * x_distance) * model_scale[2];
+			}
+			if (current_mode == 6) {
+				if(ImGui::IsMouseDown(0)) {
+					viewport_point[2] = (-1 + (2 * xPos/m_windowWidth) > 1) ? 1 : (-1 + (2 * xPos/m_windowWidth));
+					viewport_point[3] = (1 - (2 * yPos/m_windowHeight) > 1) ? 1 : (1 - (2 * yPos/m_windowHeight));
 
-	// Fill in with event handling code...
+					viewport_point[2] = viewport_point[2] < -1 ? -1 : viewport_point[2];
+					viewport_point[3] = viewport_point[3] < -1 ? -1 : viewport_point[3];
 
+				}
+			}
+			eventHandled = true;
+	}
+
+	mouse_x_current_pos = xPos;
+	mouse_y_current_pos = yPos;
 	return eventHandled;
 }
 
@@ -330,8 +705,14 @@ bool A2::mouseButtonInputEvent (
 		int mods
 ) {
 	bool eventHandled(false);
-
-	// Fill in with event handling code...
+	if(actions == GLFW_PRESS){
+		if (current_mode == 6) {
+			viewport_point[0] = -1 + (2 * mouse_x_current_pos / m_windowWidth);
+			viewport_point[1] = 1 - (2 * mouse_y_current_pos / m_windowHeight);
+			viewport_point[2] = -1 + (2 * mouse_x_current_pos / m_windowWidth);
+			viewport_point[3] = 1 - (2 * mouse_y_current_pos / m_windowHeight);
+		}
+	}
 
 	return eventHandled;
 }
@@ -361,8 +742,6 @@ bool A2::windowResizeEvent (
 ) {
 	bool eventHandled(false);
 
-	// Fill in with event handling code...
-
 	return eventHandled;
 }
 
@@ -377,7 +756,36 @@ bool A2::keyInputEvent (
 ) {
 	bool eventHandled(false);
 
-	// Fill in with event handling code...
+	if ( action == GLFW_PRESS ) {
+		if ( key == GLFW_KEY_Q ) {
+			glfwSetWindowShouldClose(m_window, GL_TRUE);
+		}
+		if ( key == GLFW_KEY_A ) {
+			reset();
+		}
+		if ( key == GLFW_KEY_O ) {	// rotate view
+			current_mode = 0;
+		}
+		if ( key == GLFW_KEY_N ) {	// translate view
+			current_mode = 1;
+		}
+		if ( key == GLFW_KEY_P ) {	// perspective
+			current_mode = 2;
+		}
+		if ( key == GLFW_KEY_R ) {	// rotate model
+			current_mode = 3;
+		}
+		if ( key == GLFW_KEY_T ) {	// translate model
+			current_mode = 4;
+		}
+		if ( key == GLFW_KEY_S ) {	// scale model
+			current_mode = 5;
+		}
+		if ( key == GLFW_KEY_V ) {	// viewport
+			current_mode = 6;
+		}
+		eventHandled = true;
+	}
 
 	return eventHandled;
 }
