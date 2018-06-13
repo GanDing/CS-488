@@ -24,12 +24,19 @@ JointNode::~JointNode() {
 glm::vec3 JointNode::reason_rotate(glm::vec3 rotate_angle) {
   glm::vec3 reason_angle = glm::vec3();
 
-  reason_angle.x = rotate_angle.x + previous_angle.x > m_joint_x.max ? m_joint_x.max : rotate_angle.x;
-  reason_angle.x = rotate_angle.x + previous_angle.x < m_joint_x.min ? m_joint_x.min : rotate_angle.x;
+  reason_angle.x = rotate_angle.x;
 
+  if (previous_angle.x + rotate_angle.x > m_joint_x.max) 
+    reason_angle.x = m_joint_x.max - previous_angle.x;
+  if (previous_angle.x + rotate_angle.x < m_joint_x.min)
+    reason_angle.x = m_joint_x.min - previous_angle.x;
 
-  reason_angle.y = rotate_angle.y + previous_angle.y > m_joint_y.max ? m_joint_y.max : rotate_angle.y;
-  reason_angle.y = rotate_angle.y + previous_angle.y < m_joint_y.min ? m_joint_y.min : rotate_angle.y;
+  reason_angle.y = rotate_angle.y;
+
+  if (previous_angle.y + rotate_angle.y > m_joint_y.max) 
+    reason_angle.y = m_joint_y.max - previous_angle.y;
+  if (previous_angle.x + rotate_angle.y < m_joint_y.min)
+    reason_angle.y = m_joint_y.min - previous_angle.y;
 
   reason_angle.z = rotate_angle.z;
 
@@ -48,11 +55,10 @@ glm::mat4 JointNode::get_M() {
   return parent_trans * trans * rotate_mat;
 }
 
-glm::vec3 JointNode::update_rotate_angle() {
+void JointNode::update_rotate_angle(vec3 & result_angle) {
   previous_angle = previous_angle + current_angle;
-  vec3 result_angle = current_angle;
+  result_angle = current_angle;
   current_angle = vec3();
-  return result_angle;
 }
 
 void JointNode::start_rotate(glm::vec3 angle) {

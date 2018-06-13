@@ -11,9 +11,9 @@
 #include <iostream>
 
 enum class NodeType {
-	SceneNode,
-	GeometryNode,
-	JointNode
+  SceneNode,
+  GeometryNode,
+  JointNode
 };
 
 class SceneNode {
@@ -24,7 +24,7 @@ public:
 
   virtual ~SceneNode();
     
-	int totalSceneNodes() const;
+  int totalSceneNodes() const;
     
   const glm::mat4& get_transform() const;
   const glm::mat4& get_inverse() const;
@@ -37,16 +37,18 @@ public:
 
   void apply_effect_to_child();
 
+  void reset_select();
+
   virtual glm::mat4 get_M();
 
   SceneNode * find_node_by_id(unsigned int id);
 
-	//-- Transformations:
+  //-- Transformations:
   void rotate(char axis, float angle);
   void scale(const glm::vec3& amount);
   void translate(const glm::vec3& amount);
 
-	friend std::ostream & operator << (std::ostream & os, const SceneNode & node);
+  friend std::ostream & operator << (std::ostream & os, const SceneNode & node);
 
   void render(
     ShaderProgram & shader,
@@ -55,7 +57,7 @@ public:
     const bool isPicking
   );
 
-	bool isSelected;
+  bool isSelected;
     
   // Transformations
   glm::mat4 trans;
@@ -66,13 +68,12 @@ public:
 
   SceneNode* parent;
 
-
-	NodeType m_nodeType;
-	std::string m_name;
-	unsigned int m_nodeId;
+  NodeType m_nodeType;
+  std::string m_name;
+  unsigned int m_nodeId;
 
 
 private:
-	// The number of SceneNode instances.
-	static unsigned int nodeInstanceCount;
+  // The number of SceneNode instances.
+  static unsigned int nodeInstanceCount;
 };

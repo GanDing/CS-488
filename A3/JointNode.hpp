@@ -16,7 +16,7 @@ public:
 
   virtual glm::mat4 get_M();
 
-  glm::vec3 update_rotate_angle();
+  void update_rotate_angle(glm::vec3 & result_angle);
 
   
   struct JointRange {

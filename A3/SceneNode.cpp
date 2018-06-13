@@ -92,6 +92,13 @@ void SceneNode::apply_effect_to_child() {
 	}
 }
 
+void SceneNode::reset_select() {
+	isSelected = false;
+	for (SceneNode * child : children) {
+		child->reset_select();
+	}
+}
+
 SceneNode * SceneNode::find_node_by_id(unsigned int id) {
 	if (id == m_nodeId) {
 		if (parent->m_nodeType == NodeType::JointNode) {
@@ -185,15 +192,6 @@ void SceneNode::render(
 ) {
   if (m_nodeType == NodeType::GeometryNode) {
     GeometryNode * geometryNode = static_cast<GeometryNode *>(this);
-    // updateShaderUniforms(shader, view, isPicking, *geometryNode);
-
-    // // Get the BatchInfo corresponding to the GeometryNode's unique MeshId.
-    // BatchInfo batchInfo = batchInfoMap[geometryNode->meshId];
-
-    // //-- Now render the mesh:
-    // shader.enable();
-    // glDrawArrays(GL_TRIANGLES, batchInfo.startIndex, batchInfo.numIndices);
-    // shader.disable();
     geometryNode->geometryNodeRender(shader, view, batchInfoMap, isPicking);
   }
   for (SceneNode * child : children) {

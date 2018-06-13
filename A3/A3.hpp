@@ -57,7 +57,11 @@ protected:
 	void reset();
 	void resetOrientation();
 	void resetTranslation();
+	void resetJoint();
 	void resetAll();
+
+	void undo();
+	void redo();
 
 	glm::vec3 vCalcRotVec(float fNewX, float fNewY,
                  float fOldX, float fOldY,
@@ -93,8 +97,9 @@ protected:
 
 	std::shared_ptr<SceneNode> m_rootNode;
 	std::list<SceneNode *> current_select_node;
-	std::stack<std::pair<JointNode *, glm::vec3>> undo_stack;
-	std::stack<std::pair<JointNode *, glm::vec3>> redo_stack;
+
+	std::list<std::list<std::pair<JointNode *, glm::vec3>>> undo_stack;
+	std::list<std::list<std::pair<JointNode *, glm::vec3>>> redo_stack;
 
 	bool option[4];
 	bool rotating;

@@ -61,7 +61,7 @@ void GeometryNode::updateShaderUniforms(
       vec3 kd = material.kd;
 
       if (isSelected) {
-      	kd = {1, 0, 1};
+      	kd = {1, 1, 0};
     	}
 
       glUniform3fv(location, 1, value_ptr(kd));

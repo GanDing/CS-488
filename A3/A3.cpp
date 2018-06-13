@@ -294,9 +294,19 @@ void A3::resetTranslation() {
   translate_history = vec3();
 }
 
+void A3::resetJoint() {
+  while (undo_stack.size() !=0) {
+    undo();
+  }
+  redo_stack.clear();
+  current_select_node.clear();
+  m_rootNode->reset_select();
+}
+
 void A3::resetAll() {
   resetOrientation();
   resetTranslation();
+  resetJoint();
 }
 
 //----------------------------------------------------------------------------------------
@@ -307,13 +317,13 @@ void A3::uploadCommonSceneUniforms() {
 		GLint location = m_shader.getUniformLocation("Perspective");
 		glUniformMatrix4fv(location, 1, GL_FALSE, value_ptr(m_perpsective));
 		CHECK_GL_ERRORS;
-    
-    // location = m_shader.getUniformLocation("picking");
-    // glUniform1i( location, do_picking ? 1 : 0 );
-    // CHECK_GL_ERRORS;
+
+    location = m_shader.getUniformLocation("picking");
+    glUniform1i( location, do_picking ? 1 : 0 );
+    CHECK_GL_ERRORS;
 
 		//-- Set LightSource uniform for the scene:
-    //if( !do_picking ) {
+    if( !do_picking ) {
       location = m_shader.getUniformLocation("light.position");
       glUniform3fv(location, 1, value_ptr(m_light.position));
       location = m_shader.getUniformLocation("light.rgbIntensity");
@@ -324,7 +334,7 @@ void A3::uploadCommonSceneUniforms() {
       vec3 ambientIntensity(0.05f);
       glUniform3fv(location, 1, value_ptr(ambientIntensity));
       CHECK_GL_ERRORS;
-    //}
+    }
 		// {
 		// 	location = m_shader.getUniformLocation("light.position");
 		// 	glUniform3fv(location, 1, value_ptr(m_light.position));
@@ -425,6 +435,9 @@ void A3::guiLogic()
   }
   ImGui::PopID();
 
+  ImGui::Text( "You can undo: %lu time(s)", undo_stack.size() );
+  ImGui::Text( "You can redo: %lu time(s)", redo_stack.size() );
+
 	ImGui::Text( "Framerate: %.1f FPS", ImGui::GetIO().Framerate );
 
 	ImGui::End();
@@ -518,7 +531,7 @@ void A3::renderSceneGraph( SceneNode & root ) {
 	// could put a set of mutually recursive functions in this class, which
 	// walk down the tree from nodes of different types.
 
-	root.render(m_shader, m_view, m_batchInfoMap, 0);
+	root.render(m_shader, m_view, m_batchInfoMap, do_picking);
 
 	glBindVertexArray(0);
 	CHECK_GL_ERRORS;
@@ -546,6 +559,39 @@ void A3::renderArcCircle() {
 	CHECK_GL_ERRORS;
 }
 
+void A3::undo() {
+	if (undo_stack.size() == 0) {
+		return;
+	}
+	std::list<std::pair<JointNode *, glm::vec3>> latest_command = undo_stack.back();
+	undo_stack.pop_back();
+
+  for (pair<JointNode *, glm::vec3> command : latest_command) {
+    JointNode * joint_node = command.first;
+    vec3 rotations = command.second;
+    joint_node->start_rotate(-rotations);
+    vec3 temp = vec3();
+    joint_node->update_rotate_angle(temp);
+  }
+  redo_stack.push_back(latest_command);
+}
+
+void A3::redo() {
+  if (redo_stack.size() == 0) {
+    return;
+  }
+  std::list<std::pair<JointNode *, glm::vec3>> latest_command = redo_stack.back();
+  redo_stack.pop_back();
+
+  for (pair<JointNode *, glm::vec3> command : latest_command) {
+    JointNode * joint_node = command.first;
+    vec3 rotations = command.second;
+    joint_node->start_rotate(rotations);
+    vec3 temp = vec3();
+    joint_node->update_rotate_angle(temp);
+  }
+    undo_stack.push_back(latest_command);
+}
 //----------------------------------------------------------------------------------------
 /*
  * Called once, after program is signaled to terminate.
@@ -610,21 +656,17 @@ bool A3::mouseMoveEvent (
     if (current_mode == 1) {    // joint
       if(ImGui::IsMouseDown(2)) { 
         rotating = true;
-        double angle = 0.1 * y_distance;
+        double angle = 0.2 * y_distance;
         joint_x_angle = joint_x_angle + angle;
       }
       if(ImGui::IsMouseDown(1)) {
         rotating = true;
-        double angle = 0.1 * x_distance;
+        double angle = 0.2 * x_distance;
         joint_y_angle = joint_y_angle + angle;
       }
-      if (ImGui::IsMouseDown(1) == 0 && ImGui::IsMouseDown(2) == 0) {
-        rotating = false;
-      } else {
-        for(SceneNode * node : current_select_node){
-          JointNode * jnode = (JointNode *)node->parent;
-          //jnode->showRotation(vec3(joint_x_angle, joint_y_angle, 0));
-        }
+      for(SceneNode * node : current_select_node){
+        JointNode * joint_node = (JointNode *)node->parent;
+        joint_node->start_rotate(vec3(joint_x_angle, joint_y_angle, 0));
       }
       eventHandled = true;
     }
@@ -688,40 +730,44 @@ bool A3::mouseButtonInputEvent (
       CHECK_GL_ERRORS;
 
       SceneNode * select_node = m_rootNode->find_node_by_id(what);
-
-      if (select_node != NULL) {
+      if (select_node == NULL) {
+      	return false;
+      } else {
         if( select_node->isSelected ){
           current_select_node.push_back(select_node);
         } else {
           current_select_node.remove(select_node);
         }
       }
+      cout << *select_node << endl;
     }
-    // if ( actions == GLFW_RELEASE ) {
-    //   if ( !isRotating ) {
-    //     isRotating = false;
-    //     // reset the rotate angle
-    //     std::pair<JointNode *, glm::vec3> newCmd;
-    //     for(SceneNode * node : current_select_node){
-    //       JointNode * jnode = (JointNode *)node->parentNode;
-    //       vec3 final_rot = jnode->commit();
-    //       if (final_rot != vec3(0,0,0)){
-    //         cout << "not zero!" << endl;
-    //         pair<JointNode *, glm::vec3> item;
-    //         item.first = jnode;
-    //         item.second = vec3(final_rot);
-    //         cmd.operationList.push_back(item);
-    //       } // if
-    //       cout << "final rotation mark for " << jnode->m_name << ":" << final_rot << endl;
-    //     } // for
-    //     if(!cmd.operationList.empty()){
-    //       cout << "stack pushed with " << cmd.operationList.size() << " items" << endl;
-    //       undoList.push_back(cmd);
-    //       redoList.clear();
-    //     }
-    //     eventHandled = true;
-    //   } // if
-    // }    
+    if ( actions == GLFW_RELEASE ) {
+      if ( rotating ) {
+        rotating = false;
+        // reset the rotate angle
+        joint_x_angle = 0;
+        joint_y_angle = 0;
+        std::list<std::pair<JointNode *, glm::vec3>> command_list;
+        for( SceneNode * node : current_select_node ){
+          JointNode * joint = (JointNode *)node->parent;
+          vec3 final_angle = vec3();
+          joint->update_rotate_angle(final_angle);
+
+          if (final_angle != vec3()) {  // there is no move
+            pair<JointNode *, glm::vec3> command;
+            command.first = joint;
+            command.second = vec3(final_angle);
+            command_list.push_back(command);
+          }
+          
+        } // for
+        if(command_list.size() > 0) {
+          undo_stack.push_back(command_list);
+          redo_stack.clear();
+        }
+        eventHandled = true;
+      } // if
+    }    
   }
 
 	return eventHandled;
@@ -780,7 +826,7 @@ bool A3::keyInputEvent (
       resetOrientation();
     }
     if( key == GLFW_KEY_N ) {
-      //resetJoint();
+      resetJoint();
     }
     if( key == GLFW_KEY_A ) {
       resetAll();
@@ -797,10 +843,12 @@ bool A3::keyInputEvent (
     if( key == GLFW_KEY_F ) {
       option[3] = !option[3];
     }
-
     if( key == GLFW_KEY_U ) {
+    	undo();
     }
     if( key == GLFW_KEY_R ) {
+      cout << "redo" << endl;
+    	redo();
     }
     if( key == GLFW_KEY_P ) {
       current_mode = 0;
