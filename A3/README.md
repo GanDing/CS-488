@@ -7,11 +7,11 @@
 ----
 
 Run the default 
-		$ premake4 gmake 
-		$ make
+    	$ premake4 gmake
+    	$ make
 combination to comile the code. 
 Then run 
-		$ ./A3 Asset/puppet.lua
+			$ ./A3 Asset/puppet.lua
 to start rendering. This assignment was build successfully on computer gl34.
 
 ## Manual
