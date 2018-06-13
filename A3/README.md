@@ -14,8 +14,8 @@ Run the default:
 combination to comile the code. 
 Then run:
 
-			$ ./A3 Asset/puppet.lua
-			
+		$ ./A3 Asset/puppet.lua
+
 to start rendering. This assignment was build successfully on computer gl34.
 
 ## Manual
@@ -25,7 +25,6 @@ to start rendering. This assignment was build successfully on computer gl34.
 Puppet Model:
 
 root -> torso	-> torsoNeck(Joint) -> neck -> neckHead(Joint) -> head -> eyes/ears
-
 			->leftArm
 torso -> hip
 			->rightArm
