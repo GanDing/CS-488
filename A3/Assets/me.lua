@@ -110,11 +110,11 @@ leftWristJoint = gr.joint('leftWristJoint', {-80, 0, 80}, {0, 0, 0})
   leftWrist:add_child(leftWristJoint)
 leftWristJoint:scale(1/0.02,1/0.02,1/0.02)
 
--- leftHand = gr.mesh('cube', 'leftHand')
---   leftWristJoint:add_child(leftHand)
--- leftHand:scale(0.05, 0.13, 0.13)
--- leftHand:translate(0,-0.05,0)
--- leftHand:set_material(green)
+leftHand = gr.mesh('cube', 'leftHand')
+  leftWristJoint:add_child(leftHand)
+leftHand:scale(0.05, 0.13, 0.13)
+leftHand:translate(0,-0.05,0)
+leftHand:set_material(green)
 
 
 -- right arms and hands ---------------------------

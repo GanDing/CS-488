@@ -6,9 +6,13 @@
 #include "cs488-framework/MeshConsolidator.hpp"
 
 #include "SceneNode.hpp"
+#include "JointNode.hpp"
 
 #include <glm/glm.hpp>
 #include <memory>
+#include <list>
+#include <stack>
+#include <utility>
 
 struct LightSource {
 	glm::vec3 position;
@@ -47,8 +51,19 @@ protected:
 
 	void initPerspectiveMatrix();
 	void uploadCommonSceneUniforms();
-	void renderSceneGraph(const SceneNode &node);
+	void renderSceneGraph(SceneNode &node);
 	void renderArcCircle();
+
+	void reset();
+	void resetOrientation();
+	void resetTranslation();
+	void resetAll();
+
+	glm::vec3 vCalcRotVec(float fNewX, float fNewY,
+                 float fOldX, float fOldY,
+                 float fDiameter);
+
+	void vAxisRotMatrix(float fVecX, float fVecY, float fVecZ, glm::mat4 &mNewMat);
 
 	glm::mat4 m_perpsective;
 	glm::mat4 m_view;
@@ -77,4 +92,19 @@ protected:
 	std::string m_luaSceneFile;
 
 	std::shared_ptr<SceneNode> m_rootNode;
+	std::list<SceneNode *> current_select_node;
+	std::stack<std::pair<JointNode *, glm::vec3>> undo_stack;
+	std::stack<std::pair<JointNode *, glm::vec3>> redo_stack;
+
+	bool option[4];
+	bool rotating;
+	bool do_picking;
+	int current_mode = 0;
+	double mouse_x_current_pos;
+	double mouse_y_current_pos;
+
+	glm::vec3 translate_history;
+	glm::mat4 rotate_history;
+	double joint_x_angle;
+	double joint_y_angle;
 };

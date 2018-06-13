@@ -18,16 +18,20 @@ cubeMesh:set_material(gr.material({0.8, 0.2, 0.2}, {0.8, 0.8, 0.8}, 10.0))
 -- Add the cubeMesh GeometryNode to the child list of rootnode.
 rootNode:add_child(cubeMesh)
 
--- Create a GeometryNode with MeshId = 'sphere', and name = 'head'.
-sphereMesh = gr.mesh('sphere', 'name-of-sphere')
+-- -- Create a GeometryNode with MeshId = 'sphere', and name = 'head'.
+-- sphereMesh = gr.mesh('sphere', 'name-of-sphere')
+-- sphereMesh:scale(0.5, 0.5, 0.5)
+-- sphereMesh:translate(0.0, 0.5, -5.0)
+-- sphereMesh:set_material(gr.material({0.4, 0.4, 0.8}, {0.8, 0.8, 0.8}, 50.0))
+
+-- Add the sphereMesh GeometryNode to the child list of rootnode.
+
+sphereMesh = gr.mesh('suzanne', 'name-of-sphere')
 sphereMesh:scale(0.5, 0.5, 0.5)
 sphereMesh:translate(0.0, 0.5, -5.0)
 sphereMesh:set_material(gr.material({0.4, 0.4, 0.8}, {0.8, 0.8, 0.8}, 50.0))
 
--- Add the sphereMesh GeometryNode to the child list of rootnode.
-rootNode:add_child(sphereMesh)
-
-
+cubeMesh:add_child(sphereMesh)
 -- Return the root with all of it's childern.  The SceneNode A3::m_rootNode will be set
 -- equal to the return value from this Lua script.
 return rootNode

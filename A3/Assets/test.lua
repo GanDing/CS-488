@@ -2,65 +2,83 @@
 -- A simplified puppet without posable joints, but that
 -- looks roughly humanoid.
 
-rootnode = gr.node('root')
-rootnode:rotate('y', 20.0)
-rootnode:scale( 0.25, 0.25, 0.25 )
-rootnode:translate(0.0, 0.0, -1.0)
+rootNode = gr.node('root')
+rootNode:rotate('y', -20.0)
+rootNode:scale( 0.25, 0.25, 0.25 )
+rootNode:translate(0.0, 0.0, -1.0)
 
 red = gr.material({1.0, 0.0, 0.0}, {0.1, 0.1, 0.1}, 10)
-blue = gr.material({0.0, 0.0, 1.0}, {0.1, 0.1, 0.1}, 10)
+blue = gr.material({0.0, 0.0, 1.0}, {0.5, 0.5, 0.5}, 10)
 green = gr.material({0.0, 1.0, 0.0}, {0.1, 0.1, 0.1}, 10)
 white = gr.material({1.0, 1.0, 1.0}, {0.1, 0.1, 0.1}, 10)
 
-torso = gr.mesh('cube', 'torso')
-  rootnode:add_child(torso)
-torso:set_material(white)
-torso:scale(0.5,1.0,0.5);
-torso:translate(0,0.3,0)
+-- torso = gr.mesh('cube', 'torso')
+--   rootNode:add_child(torso)
+-- torso:set_material(white)
+-- torso:scale(0.5,1.0,0.5);
+-- torso:translate(0,0.3,0)
 
-torsoNeckJoint = gr.joint("torsoNeckJoint", {-10, 0, 10}, {0, 0, 0})
-torsoNeckJoint:translate(0.0, 0.55, 0)
-  torso:add_child(torsoNeckJoint)
+torso = gr.mesh('sphere', 'torso')
+rootNode:add_child(torso)
+torso:set_material(white)
+torso:scale(1.0, 1.0, 0.8)
+torso:translate(0, 0.3, 0)
+
+torsoNeckJoint = gr.joint("torsoNeckJoint", {-30, 0, 30}, {-50, 0, -50})
+torsoNeckJoint:translate(0.0, 1.1, 0)
+torso:add_child(torsoNeckJoint)
 torsoNeckJoint:scale(1/0.5,1,1/0.5)
 
-neck = gr.mesh('sphere', 'neck')
+neck = gr.mesh('cube', 'neck')
   torsoNeckJoint:add_child(neck)
 -- neck:scale(1.0/0.5, 1.0, 1.0/0.5)
-neck:scale(0.15, 0.3, 0.15)
+neck:scale(0.3, 0.5, 0.4)
 -- neck:translate(0.0, 0.6, 0.0)
 -- neck:scale(0.12, 0.25, 0.12)
-neck:set_material(blue)
+neck:set_material(white)
+
+leftEye = gr.mesh('cube', 'leftEye')
+neck:add_child(leftEye)
+leftEye:scale(0.2, 0.1, 0.1)
+leftEye:translate(-0.2, 0.2, 1)
+leftEye:set_material(blue)
+
+rightEye = gr.mesh('cube', 'rightEye')
+neck:add_child(rightEye)
+rightEye:scale(0.2, 0.1, 0.1)
+rightEye:translate(0.2, 0.2, 1)
+rightEye:set_material(blue)
 
 neckHeadJoint = gr.joint("neckHeadJoint", {-30, 0, 30}, {-80, 0, 80})
 neckHeadJoint:translate(0.0, 0.33, 0.0)
 neckHeadJoint:scale(1/0.15,1/0.3,1/0.15)
   neck:add_child(neckHeadJoint)
 
-head = gr.mesh('cube', 'head')
-  neckHeadJoint:add_child(head)
--- head:scale(1.0/0.15, 1/0.3, 1.0/0.15)
-head:scale(0.4, 0.4, 0.4)
--- head:translate(0.0, 0.9, 0.0)
+-- head = gr.mesh('cube', 'head')
+--   neckHeadJoint:add_child(head)
+-- -- head:scale(1.0/0.15, 1/0.3, 1.0/0.15)
 -- head:scale(0.4, 0.4, 0.4)
-head:set_material(red)
+-- -- head:translate(0.0, 0.9, 0.0)
+-- -- head:scale(0.4, 0.4, 0.4)
+-- head:set_material(red)
 
-ears = gr.mesh('sphere', 'ears')
-head:add_child(ears)
-ears:scale(1.2, 0.08, 0.08)
-ears:set_material(red)
-ears:set_material(blue)
+-- ears = gr.mesh('sphere', 'ears')
+-- head:add_child(ears)
+-- ears:scale(1.2, 0.08, 0.08)
+-- ears:set_material(red)
+-- ears:set_material(blue)
 
-leftEye = gr.mesh('cube', 'leftEye')
-head:add_child(leftEye)
-leftEye:scale(0.2, 0.1, 0.1)
-leftEye:translate(-0.2, 0.2, 0.5)
-leftEye:set_material(blue)
+-- leftEye = gr.mesh('cube', 'leftEye')
+-- head:add_child(leftEye)
+-- leftEye:scale(0.2, 0.1, 0.1)
+-- leftEye:translate(-0.2, 0.2, 0.5)
+-- leftEye:set_material(blue)
 
-rightEye = gr.mesh('cube', 'rightEye')
-head:add_child(rightEye)
-rightEye:scale(0.2, 0.1, 0.1)
-rightEye:translate(0.2, 0.2, 0.5)
-rightEye:set_material(blue)
+-- rightEye = gr.mesh('cube', 'rightEye')
+-- head:add_child(rightEye)
+-- rightEye:scale(0.2, 0.1, 0.1)
+-- rightEye:translate(0.2, 0.2, 0.5)
+-- rightEye:set_material(blue)
 
 -- left arms and hands ---------------------------
 
@@ -110,11 +128,11 @@ leftWristJoint = gr.joint('leftWristJoint', {-80, 0, 80}, {0, 0, 0})
   leftWrist:add_child(leftWristJoint)
 leftWristJoint:scale(1/0.02,1/0.02,1/0.02)
 
--- leftHand = gr.mesh('cube', 'leftHand')
---   leftWristJoint:add_child(leftHand)
--- leftHand:scale(0.05, 0.13, 0.13)
--- leftHand:translate(0,-0.05,0)
--- leftHand:set_material(green)
+leftHand = gr.mesh('cube', 'leftHand')
+  leftWristJoint:add_child(leftHand)
+leftHand:scale(0.05, 0.13, 0.13)
+leftHand:translate(0,-0.05,0)
+leftHand:set_material(green)
 
 
 -- right arms and hands ---------------------------
@@ -273,4 +291,4 @@ rightFoot:set_material(green)
 -- neckHeadJoint:rotate('x',30)
 -- neckHeadJoint:rotate('x',00)
 
-return rootnode
+return rootNode

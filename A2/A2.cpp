@@ -402,6 +402,8 @@ void A2::reset() {
 		vec4(0, 0, -1, 0), 
 		vec4(0, 0, 10, 1)));
 
+	cout << V << endl;
+
 	setPerspectiveView(field_of_view, near, far);
 
 }

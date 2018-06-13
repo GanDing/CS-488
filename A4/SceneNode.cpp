@@ -1,4 +1,5 @@
 #include "SceneNode.hpp"
+#include "JointNode.hpp"
 
 #include "cs488-framework/MathUtils.hpp"
 

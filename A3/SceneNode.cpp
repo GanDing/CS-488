@@ -1,6 +1,8 @@
 #include "SceneNode.hpp"
+#include "GeometryNode.hpp"
 
 #include "cs488-framework/MathUtils.hpp"
+#include "cs488-framework/GlErrorCheck.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -8,6 +10,8 @@ using namespace std;
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/io.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace glm;
 
@@ -21,7 +25,10 @@ SceneNode::SceneNode(const std::string& name)
   : m_name(name),
 	m_nodeType(NodeType::SceneNode),
 	trans(mat4()),
+  parent_trans(mat4()),
+  trackball_mat(mat4()),
 	isSelected(false),
+  parent(NULL),
 	m_nodeId(nodeInstanceCount++)
 {
 
@@ -33,7 +40,9 @@ SceneNode::SceneNode(const SceneNode & other)
 	: m_nodeType(other.m_nodeType),
 	  m_name(other.m_name),
 	  trans(other.trans),
-	  invtrans(other.invtrans)
+	  invtrans(other.invtrans),
+    parent_trans(other.parent_trans),
+    trackball_mat(other.trackball_mat)
 {
 	for(SceneNode * child : other.children) {
 		this->children.push_front(new SceneNode(*child));
@@ -65,12 +74,43 @@ const glm::mat4& SceneNode::get_inverse() const {
 
 //---------------------------------------------------------------------------------------
 void SceneNode::add_child(SceneNode* child) {
+	child->parent = this;
+	child->parent_trans = get_M();
 	children.push_back(child);
 }
 
 //---------------------------------------------------------------------------------------
 void SceneNode::remove_child(SceneNode* child) {
 	children.remove(child);
+}
+
+//---------------------------------------------------------------------------------------
+void SceneNode::apply_effect_to_child() {
+	for(SceneNode * child : children) {
+		child->parent_trans = get_M();
+		child->apply_effect_to_child();
+	}
+}
+
+SceneNode * SceneNode::find_node_by_id(unsigned int id) {
+	if (id == m_nodeId) {
+		if (parent->m_nodeType == NodeType::JointNode) {
+			isSelected = !isSelected;
+			return this;
+		}
+		return NULL;
+	}
+	for (SceneNode * child : children) {
+		SceneNode * result = child->find_node_by_id(id);
+		if( result ) {
+			return result;
+		}
+	}
+	return NULL;
+}
+
+glm::mat4 SceneNode::get_M(){
+	return parent_trans * trans * trackball_mat;
 }
 
 //---------------------------------------------------------------------------------------
@@ -92,16 +132,19 @@ void SceneNode::rotate(char axis, float angle) {
 	}
 	mat4 rot_matrix = glm::rotate(degreesToRadians(angle), rot_axis);
 	trans = rot_matrix * trans;
+	apply_effect_to_child();
 }
 
 //---------------------------------------------------------------------------------------
 void SceneNode::scale(const glm::vec3 & amount) {
 	trans = glm::scale(amount) * trans;
+	apply_effect_to_child();
 }
 
 //---------------------------------------------------------------------------------------
 void SceneNode::translate(const glm::vec3& amount) {
 	trans = glm::translate(amount) * trans;
+	apply_effect_to_child();
 }
 
 
@@ -132,4 +175,28 @@ std::ostream & operator << (std::ostream & os, const SceneNode & node) {
 	os << "]";
 
 	return os;
+}
+
+void SceneNode::render(
+  ShaderProgram & shader, 
+  glm::mat4 & view, 
+  BatchInfoMap & batchInfoMap,
+  const bool isPicking
+) {
+  if (m_nodeType == NodeType::GeometryNode) {
+    GeometryNode * geometryNode = static_cast<GeometryNode *>(this);
+    // updateShaderUniforms(shader, view, isPicking, *geometryNode);
+
+    // // Get the BatchInfo corresponding to the GeometryNode's unique MeshId.
+    // BatchInfo batchInfo = batchInfoMap[geometryNode->meshId];
+
+    // //-- Now render the mesh:
+    // shader.enable();
+    // glDrawArrays(GL_TRIANGLES, batchInfo.startIndex, batchInfo.numIndices);
+    // shader.disable();
+    geometryNode->geometryNodeRender(shader, view, batchInfoMap, isPicking);
+  }
+  for (SceneNode * child : children) {
+    child->render(shader, view, batchInfoMap, isPicking);
+  }
 }
