@@ -24,11 +24,10 @@ to start rendering. This assignment was build successfully on computer gl34.
 
 Puppet Model:
 
-root -> torso	-> torsoNeck(Joint) -> neck -> neckHead(Joint) -> head -> eyes/ears
+	root -> torso	-> torsoNeck(Joint) -> neck -> neckHead(Joint) -> head -> eyes/ears
 
 torso: 
-	arms(left and right)
-	hip
+	arms(left and right), hip
 
 hip:
 	legs(left and right)
