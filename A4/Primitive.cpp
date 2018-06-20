@@ -45,6 +45,69 @@ bool Primitive::ray_intersect_triangle(Ray ray, glm::dvec3 p0, glm::dvec3 p1, gl
 
 }
 
+// bool Primitive::ray_intersect_triangle(Ray ray, glm::dvec3 p0, glm::dvec3 p1, glm::dvec3 p2, double &t) {
+// // find vectors for edge2 edges sharing vert0
+//     dvec3 const edge1 = p1 - p0;
+//     dvec3 const edge2 = p2 - p0;
+
+//     dvec4 edge2 = dvec4(edge2, 0);
+
+//     // begin calculating determinant - also used to calculate U parameter
+//     dvec4 const p = cross(ray.direction, edge2);
+
+//     // if determinant is near zero, ray lies in plane of triangle
+//     double const det = glm::dot(edge1, p);
+
+//     dvec3 qvec;
+
+//     if(det > std::numeric_limits<double>::epsilon())
+//     {
+//       // calculate distance from vert0 to ray origin
+//       dvec3 const tvec = ray.origin - vert0;
+
+//       // calculate U parameter and test bounds
+//       baryPosition.x = glm::dot(tvec, p);
+//       if(baryPosition.x < static_cast<double>(0) || baryPosition.x > det)
+//         return false;
+
+//       // prepare to test V parameter
+//       qvec = glm::cross(tvec, edge1);
+
+//       // calculate V parameter and test bounds
+//       baryPosition.y = glm::dot(dir, qvec);
+//       if((baryPosition.y < static_cast<double>(0)) || ((baryPosition.x + baryPosition.y) > det))
+//         return false;
+//     }
+//     else if(det < -std::numeric_limits<double>::epsilon())
+//     {
+//       // calculate distance from vert0 to ray origin
+//       dvec3 const tvec = orig - vert0;
+
+//       // calculate U parameter and test bounds
+//       baryPosition.x = glm::dot(tvec, p);
+//       if((baryPosition.x > static_cast<double>(0)) || (baryPosition.x < det))
+//         return false;
+
+//       // prepare to test V parameter
+//       qvec = glm::cross(tvec, edge1);
+
+//       // calculate V parameter and test bounds
+//       baryPosition.y = glm::dot(dir, qvec);
+//       if((baryPosition.y > static_cast<double>(0)) || (baryPosition.x + baryPosition.y < det))
+//         return false;
+//     }
+//     else
+//       return false; // ray is parallel to the plane of the triangle
+
+//     double inv_det = static_cast<double>(1) / det;
+
+//     // calculate distance, ray intersects triangle
+//     distance = glm::dot(edge2, qvec) * inv_det;
+//     baryPosition *= inv_det;
+
+//     return true;
+// }
+
 
 
 //---------NonhierSphere-----------//

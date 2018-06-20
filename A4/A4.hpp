@@ -40,6 +40,6 @@ glm::vec3 regularSampling(int x, int y);
 
 glm::vec3 directLight(glm::dvec4 point, Intersection hit_point, glm::dvec4 direction);
 
-glm::vec3 renderPixel(int x, int y);
+//glm::vec3 renderPixel(int x, int y);
 
-void castRays(Image & image);
+//void castRays(Image & image);

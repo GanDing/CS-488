@@ -7,7 +7,7 @@
 #include "A4.hpp"
 
 #define DISTANCE 10.0
-#define REGULAR_SAMPLING false
+#define REGULAR_SAMPLING true
 #define REGULAR_SAMPLING_SIZE 4
 #define THREAD_NUM 4
 #define MAX_HIT 1
@@ -94,8 +94,59 @@ void A4_Render(
   if (REGULAR_SAMPLING) {
     cout << "super sampling " << endl;
   }
-  
-  castRays(image);
+
+	auto renderPixel = [] (int x, int y) -> vec3 {
+   vec3 color;
+   if (REGULAR_SAMPLING) {
+     color = regularSampling(x, y);
+   } else {
+     dvec4 world_point = scene_to_world_trans * dvec4(x, y, 0, 1);
+     Ray ray = Ray(dvec4(eye_vec, 1), world_point - dvec4(eye_vec, 1));
+     color = rayColor(ray, light_beam, MAX_HIT, vec3(x, y, ny));
+   }
+   return color;
+	};
+
+  atomic<int> progress(0);
+  auto castRays = [renderPixel, &image, &progress] (uint y0, uint y1) mutable {
+    for (uint y = y0; y < y1; y++) {
+      for (uint x = 0; x < nx; x++) {
+        vec3 color;
+        // if (x !=95 || y != 160) {
+        //   color = vec3(1.0, 1.0, 1.0);
+        // }
+        // else {
+        //   color = oneRay(x, y);  
+        // }
+        color = renderPixel(x, y);
+        image(x, y, 0) = color.x;
+        image(x, y, 1) = color.y;
+        image(x, y, 2) = color.z;
+        progress += 1;
+        if (progress % ((nx * ny)/10) == 0 ) {
+          cout << "rendering " << progress / ((nx * ny)/10) << "0%" << endl;
+        } 
+      }
+    }
+  };
+
+// create tasks
+  thread t[THREAD_NUM];
+  int step = ny / THREAD_NUM;
+  int overhead = ny % THREAD_NUM;
+  int y0 = 0;
+  int y1 = 0;
+  for (int i = 0; i < THREAD_NUM; i++){
+    int o = overhead > 0 ? 1 : 0;
+    y0 = y1;
+    y1 = y0 + step + o;
+    t[i] = thread( castRays, y0, y1 );
+    overhead--;
+  }
+
+  for (int i = 0; i < THREAD_NUM; i++){
+    t[i].join();
+  }
 
 }
 
@@ -186,36 +237,6 @@ glm::vec3 directLight(glm::dvec4 point, Intersection hit_point, glm::dvec4 direc
   return color;
 }
 
-glm::vec3 renderPixel(int x, int y){
-    vec3 color;
-    if (REGULAR_SAMPLING) {
-      color = regularSampling(x, y);
-    } else {
-      dvec4 world_point = scene_to_world_trans * dvec4(x, y, 0, 1);
-      Ray ray = Ray(dvec4(eye_vec, 1), world_point - dvec4(eye_vec, 1));
-      color = rayColor(ray, light_beam, MAX_HIT, vec3(x, y, ny));
-    }
-    return color;
-};
-
-void castRays(Image & image) {
-  int part = ny / 10;
-  int index = 1;
-  for (uint y = 0; y < ny; y++) {
-    for (uint x = 0; x < nx; x++) {
-      vec3 color;
-
-      color = renderPixel(x, y);
-      image(x, y, 0) = color.x;
-      image(x, y, 1) = color.y;
-      image(x, y, 2) = color.z;
-      if (y >= part * index) {
-        cout << "rendering " << index << "0%" << endl;
-        index += 1;
-      }
-    }
-  }
-}
 
 
 
