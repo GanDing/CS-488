@@ -1,5 +1,7 @@
 #include "GeometryNode.hpp"
 
+using namespace glm;
+
 //---------------------------------------------------------------------------------------
 GeometryNode::GeometryNode(
 	const std::string & name, Primitive *prim, Material *mat )
@@ -24,4 +26,25 @@ void GeometryNode::setMaterial( Material *mat )
 	//     crash the program.
 
 	m_material = mat;
+}
+
+Intersection GeometryNode::hit(Ray ray) {
+	dvec4 new_origin = invtrans * ray.origin;
+	dvec4 new_direction = invtrans * ray.direction;
+	Ray new_ray = Ray(new_origin, new_direction);
+	Intersection result = Intersection();
+
+  // adding material info and hit for primitive
+	result = m_primitive->hit(new_ray);
+	result.phong_material = *((PhongMaterial *)m_material);
+
+	for (SceneNode * child : children) {
+		Intersection intersection = child->hit(new_ray);
+		if (!result.is_intersect() || 
+				(intersection.is_intersect() && intersection.t < result.t)) {
+			result = intersection;
+		}
+	}
+	result.N = normalize(invtrans * result.N);
+	return result;
 }

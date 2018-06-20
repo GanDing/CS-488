@@ -1,5 +1,7 @@
 #include "SceneNode.hpp"
 #include "JointNode.hpp"
+#include "GeometryNode.hpp"
+#include "PhongMaterial.hpp"
 
 #include "cs488-framework/MathUtils.hpp"
 
@@ -10,6 +12,7 @@ using namespace std;
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/io.hpp>
 
 using namespace glm;
 
@@ -110,6 +113,25 @@ void SceneNode::translate(const glm::vec3& amount) {
 //---------------------------------------------------------------------------------------
 int SceneNode::totalSceneNodes() const {
 	return nodeInstanceCount;
+}
+
+Intersection SceneNode::hit(Ray ray) {
+	dvec4 new_origin = invtrans * ray.origin;
+	dvec4 new_direction = invtrans * ray.direction;
+
+	Ray new_ray = Ray(new_origin, new_direction);
+	Intersection result = Intersection();
+
+
+	for (SceneNode * child : children) {
+		Intersection intersection = child->hit(new_ray);
+		if (!result.is_intersect() || 
+				(intersection.is_intersect() && intersection.t < result.t)) {
+			result = intersection;
+		}
+	}
+	result.N = normalize(trans * result.N);
+	return result;
 }
 
 //---------------------------------------------------------------------------------------

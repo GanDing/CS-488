@@ -25,10 +25,14 @@ struct Triangle
 class Mesh : public Primitive {
 public:
   Mesh( const std::string& fname );
-  
+  virtual Intersection hit(Ray ray);
 private:
 	std::vector<glm::vec3> m_vertices;
 	std::vector<Triangle> m_faces;
 
+	bool init;
+	glm::dvec3 max_size;
+	glm::dvec3 min_size;
+	NonhierBox bounding_box;
     friend std::ostream& operator<<(std::ostream& out, const Mesh& mesh);
 };

@@ -11,6 +11,9 @@ public:
 
 	void setMaterial( Material *material );
 
+
+  virtual Intersection hit(Ray ray);
+
 	Material *m_material;
 	Primitive *m_primitive;
 };

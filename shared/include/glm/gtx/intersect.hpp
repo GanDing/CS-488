@@ -51,7 +51,7 @@
 #endif
 
 namespace glm
-{/*
+{
 	/// @addtogroup gtx_intersect
 	/// @{
 
@@ -106,7 +106,7 @@ namespace glm
 		genType & intersectionPosition1, genType & intersectionNormal1, 
 		genType & intersectionPosition2 = genType(), genType & intersectionNormal2 = genType());
 
-*/
+
 
 	/// @}
 }//namespace glm

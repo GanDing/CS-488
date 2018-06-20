@@ -219,7 +219,7 @@ leftFoot:translate(0, 0, 0.15)
 leftFoot:set_material(green)
 
 
-rightHipJoint = gr.joint('rightHipJoint', {-90,0,90}, {0,0,0})
+rightHipJoint = gr.joint('rightHipJoint', {-90, 0, 90}, {0, 0, 0})
 hip:add_child(rightHipJoint)
 rightHipJoint:scale(1/0.3, 1/0.2, 1/0.35)
 rightHipJoint:translate(0.3, 0, 0.0)
@@ -248,7 +248,7 @@ rightCalf:translate(0, -0.4, 0)
 rightCalf:set_material(red)
 
 rightAnkleJoint = gr.joint('rightAnkleJoint', {-30, -90, 0}, {-20, 0, 20})
-  rightCalf:add_child(rightAnkleJoint)
+rightCalf:add_child(rightAnkleJoint)
 rightAnkleJoint:translate(0, -0.35, 0)
 rightAnkleJoint:scale(1/0.15, 1/0.75, 1/0.15)
 

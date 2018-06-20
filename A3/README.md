@@ -24,7 +24,7 @@ to start rendering. This assignment was build successfully on computer gl34.
 
 Puppet Model:
 
-	root -> torso	-> torsoNeck(Joint) -> neck -> neckHead(Joint) -> head -> eyes/ears
+	root -> torso -> torsoNeck(Joint) -> neck -> neckHead(Joint) -> head -> eyes/ears
 
 torso: 
 	arms(left and right), hip
@@ -42,7 +42,7 @@ Leg (same for both left and right):
 	hip(Joint)thigh -> knee -> knee(Joint) -> claf -> ankle(Joint) -> foot
 
 * There are total 14 Joint nodes. 
-	All nodes are allowed to rotate along x, in addition, head and feet are allow to rotate along y.
+	All nodes are allowed to rotate along x. In addition, head and feet are allowED to rotate along y.
 	Thus, there are total 17 DOFs.
 
 * Rotation will be recorded after you finishing each move(release mouse button), that is, only one move will be recorded when you pressing one mouse button on Joint rotate.

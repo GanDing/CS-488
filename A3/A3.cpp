@@ -335,21 +335,6 @@ void A3::uploadCommonSceneUniforms() {
       glUniform3fv(location, 1, value_ptr(ambientIntensity));
       CHECK_GL_ERRORS;
     }
-		// {
-		// 	location = m_shader.getUniformLocation("light.position");
-		// 	glUniform3fv(location, 1, value_ptr(m_light.position));
-		// 	location = m_shader.getUniformLocation("light.rgbIntensity");
-		// 	glUniform3fv(location, 1, value_ptr(m_light.rgbIntensity));
-		// 	CHECK_GL_ERRORS;
-		// }
-
-		// //-- Set background light ambient intensity
-		// {
-		// 	location = m_shader.getUniformLocation("ambientIntensity");
-		// 	vec3 ambientIntensity(0.05f);
-		// 	glUniform3fv(location, 1, value_ptr(ambientIntensity));
-		// 	CHECK_GL_ERRORS;
-		// }
 	}
 	m_shader.disable();
 }
@@ -748,25 +733,25 @@ bool A3::mouseButtonInputEvent (
         joint_x_angle = 0;
         joint_y_angle = 0;
         std::list<std::pair<JointNode *, glm::vec3>> command_list;
+        // apply to every selected node
         for( SceneNode * node : current_select_node ){
           JointNode * joint = (JointNode *)node->parent;
           vec3 final_angle = vec3();
           joint->update_rotate_angle(final_angle);
 
-          if (final_angle != vec3()) {  // there is no move
+          if (final_angle != vec3()) {  // there is no move after the command
             pair<JointNode *, glm::vec3> command;
             command.first = joint;
             command.second = vec3(final_angle);
             command_list.push_back(command);
           }
-          
-        } // for
+        }
         if(command_list.size() > 0) {
           undo_stack.push_back(command_list);
           redo_stack.clear();
         }
         eventHandled = true;
-      } // if
+      }
     }    
   }
 
@@ -816,9 +801,6 @@ bool A3::keyInputEvent (
 		if( key == GLFW_KEY_M ) {
 			show_gui = !show_gui;
 		}
-		if ( key == GLFW_KEY_Q ) {
-			glfwSetWindowShouldClose(m_window, GL_TRUE);
-		}
     if( key == GLFW_KEY_I ) {
       resetTranslation();
     }
@@ -831,6 +813,16 @@ bool A3::keyInputEvent (
     if( key == GLFW_KEY_A ) {
       resetAll();
     }
+		if ( key == GLFW_KEY_Q ) {
+			glfwSetWindowShouldClose(m_window, GL_TRUE);
+		}
+		if( key == GLFW_KEY_U ) {
+    	undo();
+    }
+    if( key == GLFW_KEY_R ) {
+      cout << "redo" << endl;
+    	redo();
+    }
     if( key == GLFW_KEY_C ) {
       option[0] = !option[0];
     }
@@ -842,13 +834,6 @@ bool A3::keyInputEvent (
     }
     if( key == GLFW_KEY_F ) {
       option[3] = !option[3];
-    }
-    if( key == GLFW_KEY_U ) {
-    	undo();
-    }
-    if( key == GLFW_KEY_R ) {
-      cout << "redo" << endl;
-    	redo();
     }
     if( key == GLFW_KEY_P ) {
       current_mode = 0;

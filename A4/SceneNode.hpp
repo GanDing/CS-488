@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Material.hpp"
+#include "Ray.hpp"
+#include "Intersection.hpp"
 
 #include <glm/glm.hpp>
 
@@ -16,36 +18,37 @@ enum class NodeType {
 
 class SceneNode {
 public:
-    SceneNode(const std::string & name);
+  SceneNode(const std::string & name);
 
 	SceneNode(const SceneNode & other);
 
-    virtual ~SceneNode();
+  virtual ~SceneNode();
     
 	int totalSceneNodes() const;
     
-    const glm::mat4& get_transform() const;
-    const glm::mat4& get_inverse() const;
+  const glm::mat4& get_transform() const;
+  const glm::mat4& get_inverse() const;
     
-    void set_transform(const glm::mat4& m);
+  void set_transform(const glm::mat4& m);
     
-    void add_child(SceneNode* child);
+  void add_child(SceneNode* child);
     
-    void remove_child(SceneNode* child);
+  void remove_child(SceneNode* child);
 
 	//-- Transformations:
-    void rotate(char axis, float angle);
-    void scale(const glm::vec3& amount);
-    void translate(const glm::vec3& amount);
+  void rotate(char axis, float angle);
+  void scale(const glm::vec3& amount);
+  void translate(const glm::vec3& amount);
 
+  virtual Intersection hit(Ray ray);
 
 	friend std::ostream & operator << (std::ostream & os, const SceneNode & node);
 
     // Transformations
-    glm::mat4 trans;
-    glm::mat4 invtrans;
+  glm::mat4 trans;
+  glm::mat4 invtrans;
     
-    std::list<SceneNode*> children;
+  std::list<SceneNode*> children;
 
 	NodeType m_nodeType;
 	std::string m_name;

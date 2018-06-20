@@ -233,9 +233,7 @@ int gr_nh_box_cmd(lua_State* L)
   get_tuple(L, 2, &pos[0], 3);
 
   double size = luaL_checknumber(L, 3);
-
   data->node = new GeometryNode(name, new NonhierBox(pos, size));
-
   luaL_getmetatable(L, "gr.node");
   lua_setmetatable(L, -2);
 
