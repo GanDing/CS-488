@@ -25,9 +25,6 @@ glm::vec3 TextureMaterial::getColor(int i, int j){
     j = j - 1;
   }
   int point = (j * width + i) * 4;
-  if(point > image.size()) {
-    cout << "pt:" << i << " " << j << " " << point << "  size: " << image.size() << endl;
-  }
   vec3 color = vec3(image[point] / COLOR_COEFFIENT,
                     image[point + 1] / COLOR_COEFFIENT,
                     image[point + 2] / COLOR_COEFFIENT);

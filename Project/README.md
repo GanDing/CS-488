@@ -26,6 +26,7 @@ All pictures generated are file store in the png folder.
   primitive.lua for generate the picture
 
 2. CSG: union.png difference.png intersect.png
+  intersection.lua to run the file, run other option need to change the last argument in gr.csg to 0(union), 1(intersect), 2(difference)
 
 3. TextureMapping: textureMapping.png
   texture.lua for generate the picture (texture pic need)

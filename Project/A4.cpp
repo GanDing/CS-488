@@ -183,13 +183,13 @@ void A4_Render(
   thread t[THREAD_NUM];
   int step = ny / THREAD_NUM;
   int overhead = ny % THREAD_NUM;
-  int y0 = 0;
-  int y1 = 0;
+  int y_0 = 0;
+  int y_1 = 0;
   for (int i = 0; i < THREAD_NUM; i++){
     int o = overhead > 0 ? 1 : 0;
-    y0 = y1;
-    y1 = y0 + step + o;
-    t[i] = thread( castRays, y0, y1 );
+    y_0 = y_1;
+    y_1 = y_0 + step + o;
+    t[i] = thread( castRays, y_0, y_1 );
     overhead--;
   }
 
