@@ -1,15 +1,12 @@
 #include <glm/ext.hpp>
 #include <glm/gtx/io.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <thread>
-#include <atomic>
 
 #include "A4.hpp"
 
 #define DISTANCE 10.0
 #define REGULAR_SAMPLING false
 #define REGULAR_SAMPLING_SIZE 4
-#define THREAD_NUM 4
 #define MAX_HIT 1
 #define EPSILON 0.0001
 
@@ -216,13 +213,3 @@ void castRays(Image & image) {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-

@@ -24,7 +24,9 @@ to start rendering. This assignment was build successfully on computer gl34.
 
 * The bounding volumn test is set by the global variable "BOUNDING_VOLUMN_TEST" in "Mesh.cpp", by setting the variable true, it will present bounding volumn.
 
-* The extra feature is super sampling by setting the default size to 3x3. 
+* The extra feature is super sampling by setting the default size to 3x3, it is control by the global variable "REGULAR_SAMPLING" in A4.cpp and it is set by false by default.
+
+* all the png is stored in the folder "png"
 
 ## Scene
 

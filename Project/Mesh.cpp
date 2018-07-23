@@ -43,7 +43,7 @@ Mesh::Mesh( const std::string& fname )
         max_size.x = std::max(vx - min_size.x, max_size.x);
         max_size.y = std::max(vy - min_size.y, max_size.y);
         max_size.z = std::max(vz - min_size.z, max_size.z);
-        
+
       }
 			m_vertices.push_back( glm::vec3( vx, vy, vz ) );
 		} else if( code == "f" ) {
@@ -59,7 +59,7 @@ std::ostream& operator<<(std::ostream& out, const Mesh& mesh)
 {
   out << "mesh {";
   /*
-  
+
   for( size_t idx = 0; idx < mesh.m_verts.size(); ++idx ) {
   	const MeshVertex& v = mesh.m_verts[idx];
   	out << glm::to_string( v.m_position );
@@ -81,7 +81,7 @@ Intersection Mesh::hit(Ray ray){
     Intersection hit_point = bounding_box.hit(ray);
     if (hit_point.is_intersect())
       return hit_point;
-    else 
+    else
       return Intersection();
   }
   double t = -1.0;
